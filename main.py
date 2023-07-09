@@ -2,7 +2,7 @@ from hashlib import sha512
 from json import dumps
 import time
 from flask import Flask
-import os
+
 
 class Block(object):
     def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
@@ -18,7 +18,7 @@ class Block(object):
         return sha512(block_string.encode()).hexdigest()
 
 
-class Blockchain():
+class Blockchain(object):
     def __init__(self):
         self.unconfirmed_transactions = []
         self.chain = []
@@ -32,7 +32,6 @@ class Blockchain():
     @property
     def last_block(self):
         return self.chain[-1]
-
 
     difficulty = 2
 
@@ -72,7 +71,10 @@ def mine(self):
 
     last_block = self.last_block
 
-    new_block = Block(index=last_block.index + 1, transactions=self.unconfirmed_transactions, timestamp=time.time(), previous_hash=last_block.hash)
+    new_block = Block(index=last_block.index + 1,
+                      transactions=self.unconfirmed_transactions,
+                      timestamp=time.time(),
+                      previous_hash=last_block.hash)
 
     proof = self.proof_of_work(new_block)
     self.add_block(new_block, proof)
@@ -90,13 +92,17 @@ def get_chain():
     chain_data = []
     for block in blockchain.chain:
         chain_data.append(block.__dict__)
+    f = open('blockchain.data', 'w', encoding='utf-8')
+    f.write(dumps({"length": str(len(chain_data)), "chain": chain_data}))
+    f.close()
+    o = open('blockchain.data', 'r', encoding='utf-8')
+    oe = o.read()
+    o.close()
 
-
-
-    return dumps({"length": str(len(chain_data)), "chain": chain_data})
+    return oe
 
 
 app.run(debug=True, port=8000)
 
-yourNgrokServerUrl = "bf31bf366cd6-2620527287896722552.ngrok-free.app"
-os.system("ngrok http --domain="+yourNgrokServerUrl+'8000')
+# You can further put the api on any server you want
+# This is much needed as I do not have a server
