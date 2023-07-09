@@ -2,7 +2,7 @@ from hashlib import sha512
 from json import dumps
 import time
 from flask import Flask
-
+import os
 
 class Block(object):
     def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
@@ -97,3 +97,6 @@ def get_chain():
 
 
 app.run(debug=True, port=8000)
+
+yourNgrokServerUrl = "bf31bf366cd6-2620527287896722552.ngrok-free.app"
+os.system("ngrok http --domain="+yourNgrokServerUrl+'8000')
