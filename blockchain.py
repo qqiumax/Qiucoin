@@ -4,6 +4,10 @@ import time
 from flask import Flask
 
 
+# This file is able to be put on any server, further broadcasting of functions are in dev.
+# This blockchain is now designed to be centralized as the broadcasting and comparing chain functions are still in dev.
+
+
 class Block(object):
     def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
         self.index = index
@@ -53,8 +57,10 @@ class Blockchain(object):
         previous_hash = self.last_block.hash
         if previous_hash != block.previous_hash:
             return False
+
         if not is_valid_proof(block, proof):
             return False
+
         block.hash = proof
         self.chain.append(block)
         return True
@@ -85,8 +91,8 @@ class Blockchain(object):
 
 app = Flask(__name__)
 
-blockchain = Blockchain()
 
+blockchain = Blockchain()
 
 
 @app.route('/', methods=['GET'])
@@ -94,9 +100,11 @@ def get_chain():
     chain_data = []
     for block in blockchain.chain:
         chain_data.append(block.__dict__)
+
     f = open('blockchain.data', 'w', encoding='utf-8')
     f.write(dumps({"length": str(len(chain_data)), "chain": chain_data}))
     f.close()
+
     o = open('blockchain.data', 'r', encoding='utf-8')
     oe = o.read()
     o.close()
